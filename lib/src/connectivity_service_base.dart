@@ -7,6 +7,8 @@ class ConnectivityService {
   final _connectivity = Connectivity();
   bool listenersEnabled = false;
 
+  bool get hasConnectivity => state$.value != ConnectivityResult.none;
+
   // Platform messages are asynchronous, so we initialize in an async method.
   void init() {
     _connectivity.onConnectivityChanged
