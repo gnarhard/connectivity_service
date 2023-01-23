@@ -1,0 +1,16 @@
+name: connectivity_service
+description: A service for managing internet connectivity in a Flutter app.
+version: 1.0.0
+
+environment:
+  sdk: '>=2.18.6 <3.0.0'
+
+dependencies:
+  connectivity_plus: ^3.0.2
+  flutter:
+    sdk: flutter
+  rxdart: ^0.27.7
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.16.0
