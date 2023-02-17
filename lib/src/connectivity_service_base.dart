@@ -11,7 +11,7 @@ class ConnectivityService {
 
   bool get hasConnectivity => state$.value != ConnectivityResult.none;
 
-  init() {
+  void init() {
     _connectivity.onConnectivityChanged
         .distinct()
         .listen((ConnectivityResult connectionStatus) {
