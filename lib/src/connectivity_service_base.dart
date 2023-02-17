@@ -1,4 +1,5 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class ConnectivityService {
@@ -10,10 +11,11 @@ class ConnectivityService {
 
   bool get hasConnectivity => state$.value != ConnectivityResult.none;
 
-  ConnectivityService() {
+  init() {
     _connectivity.onConnectivityChanged
         .distinct()
         .listen((ConnectivityResult connectionStatus) {
+      debugPrint('Connectivity: $connectionStatus');
       state$.add(connectionStatus);
     });
   }
