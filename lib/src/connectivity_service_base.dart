@@ -6,15 +6,15 @@ class ConnectivityService {
   final _connectivity = Connectivity();
   bool listenersEnabled = false;
 
-  final state$ =
-      BehaviorSubject<ConnectivityResult>.seeded(ConnectivityResult.none);
+  final state$ = BehaviorSubject<List<ConnectivityResult>>.seeded(
+      [ConnectivityResult.none]);
 
-  bool get hasConnectivity => state$.value != ConnectivityResult.none;
+  bool get hasConnectivity => !state$.value.contains(ConnectivityResult.none);
 
   void init() {
     _connectivity.onConnectivityChanged
         .distinct()
-        .listen((ConnectivityResult connectionStatus) {
+        .listen((List<ConnectivityResult> connectionStatus) {
       debugPrint('Connectivity: $connectionStatus');
       state$.add(connectionStatus);
     });
