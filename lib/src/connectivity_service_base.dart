@@ -6,7 +6,7 @@ class ConnectivityService {
   ConnectivityService({
     this.overrideConnectivity = false,
     this.overrideConnectivityValue = false,
-    this.allowNetworkToggling = true,
+    this.allowNetworkToggling = false,
   });
 
   final bool overrideConnectivity;
@@ -14,6 +14,7 @@ class ConnectivityService {
   final bool allowNetworkToggling;
   final _connectivity = Connectivity();
   bool listenersEnabled = false;
+  int connectivityChanges = 0;
 
   final state$ = BehaviorSubject<List<ConnectivityResult>>.seeded(
       [ConnectivityResult.none]);
@@ -26,11 +27,16 @@ class ConnectivityService {
     _connectivity.onConnectivityChanged
         .distinct()
         .listen((List<ConnectivityResult> connectionStatus) {
-      if (!allowNetworkToggling) return;
+      print('Connectivity: $connectionStatus');
 
-      debugPrint('Connectivity: $connectionStatus');
+      if (connectivityChanges > 2 && !allowNetworkToggling) {
+        return;
+      }
 
       state$.add(connectionStatus);
+
+      connectivityChanges++;
+      print(connectivityChanges);
     });
   }
 }
