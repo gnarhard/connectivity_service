@@ -36,7 +36,6 @@ class ConnectivityService {
       state$.add(connectionStatus);
 
       connectivityChanges++;
-      print(connectivityChanges);
     });
   }
 }
