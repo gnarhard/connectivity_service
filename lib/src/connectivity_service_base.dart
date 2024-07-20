@@ -1,23 +1,23 @@
+import 'dart:async';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart' show BehaviorSubject;
 
 class ConnectivityService {
-  ConnectivityService({
-    this.overrideConnectivity = false,
-    this.overrideConnectivityValue = false,
-    this.allowNetworkToggling = false,
-  });
-
   final bool overrideConnectivity;
   final bool overrideConnectivityValue;
   final bool allowNetworkToggling;
-  final _connectivity = Connectivity();
-  bool listenersEnabled = false;
-  int connectivityChanges = 0;
 
-  final state$ = BehaviorSubject<List<ConnectivityResult>>.seeded(
-      [ConnectivityResult.none]);
+  ConnectivityService({
+    this.overrideConnectivity = false,
+    this.overrideConnectivityValue = false,
+    this.allowNetworkToggling = true,
+  });
+
+  final _connectivity = Connectivity();
+  bool disableFutureConnections = false;
+
+  final state$ = BehaviorSubject<List<ConnectivityResult>>.seeded([]);
 
   bool get hasConnectivity => overrideConnectivity
       ? overrideConnectivityValue
@@ -25,17 +25,23 @@ class ConnectivityService {
 
   void init() {
     _connectivity.onConnectivityChanged
-        .distinct()
         .listen((List<ConnectivityResult> connectionStatus) {
-      print('Connectivity: $connectionStatus');
+      // allow toggling from network to none, but not none to network
 
-      if (connectivityChanges > 2 && !allowNetworkToggling) {
-        return;
+      if (disableFutureConnections && !allowNetworkToggling) {
+        if (connectionStatus.contains(ConnectivityResult.wifi)) {
+          return;
+        }
       }
 
       state$.add(connectionStatus);
+      print('Connectivity: $connectionStatus');
+    });
 
-      connectivityChanges++;
+    Timer(const Duration(seconds: 2), () {
+      if (state$.value.contains(ConnectivityResult.none)) {
+        disableFutureConnections = true;
+      }
     });
   }
 }
